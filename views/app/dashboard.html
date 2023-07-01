@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A simple yet powerful IP grabber" />
+
+    <title>Grabr</title>
+
+    <link
+      id="favicon"
+      rel="icon"
+      href="/cdn/fav.svg"
+    />
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+
+    <!-- import the webpage's client-side javascript file -->
+    <script src="/client.js" defer></script>
+  </head>
+  <body>    
+    <header>
+      <div class="header">
+        
+      <img src="/cdn/logo_white.svg" alt="grabr">
+      <h1>Loading...</h1>
+      <p>
+        Please wait while we load the dashboard and confirm your key.
+      </p>
+      </div>
+    </header>
+    <main style="display: none;">
+    </main>
+  </body>
+  <script src="https://palettejs.glitch.me/p.js"></script>
+  <script>
+const key = encodeURIComponent(new URL(window.location.href).searchParams.get('secret'));
+    const id = encodeURIComponent(location.pathname.split("/")[1]);
+    async function run() {
+      const res = await (await fetch(`/api/${id}?key=${key}`)).json()
+      if (!res.hits) {
+        
+      $("h1").innerText = "Error";
+      $("p").innerText = "Your link or secret key is invalid.";
+        return;
+      }
+      $("h1").innerText = "Dashboard";
+      $("p").innerText = "This is the dashboard for the link #" + id;
+      $("main").innerText = "Loading...";
+      $("main").style.display = "block";
+      showBoard(res.hits)
+    }
+    function showBoard(hits) {
+      html = `
+<table>
+<tbody>
+  <tr>
+    <td>Link:</td>
+    <td><a href="https://${location.hostname}/${id}">${location.hostname}/${id}</a></td>
+  </tr>
+  <tr>
+    <td>Dashboard:</td>
+    <td><a href="https://${location.hostname}/${id}/app?secret=${key}">${location.hostname}/${id}/app?secret=...</a></td>
+  </tr>
+  <tr>
+    <td>Secret key:</td>
+    <td>${key}</td>
+  </tr>
+</tbody>
+</table>
+`;
+      if (hits.length == 0) {
+        html = html + "<p>No one visited your link - yet!</p><table style='display:none'><tbody>"
+      } else {
+        console.log(hits)
+        html = html + `<table>
+<thead>
+  <tr>
+    <th>IP</th>
+    <th>Location</th>
+        <th>Browser</th>
+        <th>OS</th>
+        <th>View</th>
+  </tr>
+</thead><tbody>`
+      }
+      hits.forEach(hit => {
+        console.log(hit)
+        html = html + `<tr>
+    <td>${hit.ip.ip}</td>
+    <td>${hit.ip.city}, ${hit.ip.country_name}</td>
+    <td>${hit.browser.browserName} ${hit.browser.browserVersion}</td>
+    <td>${hit.os.name}</td>
+    <td><a href="javascript:" onclick="modal('${encodeURIComponent(JSON.stringify(hit))}')">View</a></td>
+  </tr>`
+      })
+      $("main").innerHTML = html + "</tbody></table>";
+    }
+    function modal(hit) {
+      console.log(hit)
+      hit = JSON.parse(decodeURIComponent(hit));
+      console.log(hit);
+      const modal = document.createElement("div");
+      modal.classList.add("modal");
+      modal.innerHTML = `<div class="modal">
+      <div class="modal-body">
+      <button onclick="$('.modal').remove()" class="remove">&times;</button>
+      <h2 style="color: black;">Event details</h1>
+      <p>This will show you more details about the event</p>
+      <h3>IP</h3>
+      <table>
+          <thead>
+  <tr>
+    <th>Query</th>
+    <th>Value</th>
+  </tr>
+</thead><tbody>
+<tr><td>IP</td><td>${hit.ip.ip}</td></tr>
+<tr><td>ISP</td><td>${hit.ip.isp}</td></tr>
+<tr><td>Host</td><td>${hit.ip.host}</td></tr>
+<tr><td>Rdns</td><td>${hit.ip.rdns}</td></tr>
+<tr><td>ASN</td><td>${hit.ip.asn}</td></tr>
+<tr><td>Country</td><td>${hit.ip.country_name} (code: ${hit.ip.country_code})</td></tr>
+<tr><td>Region</td><td>${hit.ip.region_name} (code: ${hit.ip.region_code})</td></tr>
+<tr><td>City</td><td>${hit.ip.city}</td></tr>
+<tr><td>Postal code</td><td>${hit.ip.postal_code}</td></tr>
+<tr><td>Continent</td><td>${hit.ip.continent_name} (code: ${hit.ip.continent_code})</td></tr>
+<tr><td>Unaccurate latitude</td><td>${hit.ip.latitude}</td></tr>
+<tr><td>Unaccurate longitude</td><td>${hit.ip.longitude}</td></tr>
+<tr><td>Metro code</td><td>${hit.ip.metro_code || "Unknown"}</td></tr>
+<tr><td>Timezone</td><td>${hit.ip.timezone}</td></tr>
+<tr><td>Date/time</td><td>${hit.ip.datetime}</td></tr>
+  </tbody></thead>
+  </table>
+  
+  
+          <h3>Browser</h3>
+          <table><thead>
+  <tr>
+    <th>Query</th>
+    <th>Value</th>
+  </tr>
+</thead><tbody>
+<tr><td>Name</td><td>${hit.browser.browserName}</td></tr>
+<tr><td>Version</td><td>${hit.browser.browserVersion}</td></tr>
+<tr><td>Adblock?</td><td>${hit.browser.adblock}</td></tr>
+<tr><td>Languages</td><td><span class="var">${hit.browser.languages.join("</span>, <span class='var'>")}</span></td></tr>
+<tr><td>Asks not to track</td><td>${hit.browser.doNotTrack}</td></tr>
+<tr><td>Icognito?</td><td>${hit.browser.isPrivate}</td></tr>
+  </tbody></thead>
+  
+  </table>
+  
+  
+        <h3>OS</h3>
+          <table><thead>
+  <tr>
+    <th>Query</th>
+    <th>Value</th>
+  </tr>
+</thead><tbody>
+<tr><td>Mobile?</td><td>${hit.os.mobile}</td></tr>
+<tr><td>Name</td><td>${hit.os.name}</td></tr>
+  </tbody></thead>
+  
+  </table>
+  
+  
+          <h3>Device</h3>
+          <table><thead>
+  <tr>
+    <th>Query</th>
+    <th>Value</th>
+  </tr>
+</thead><tbody>
+<tr><td>Screen width</td><td>${hit.device.screen.width}</td></tr>
+<tr><td>Screen height</td><td>${hit.device.screen.height}</td></tr>
+<tr><td>Landscape?</td><td>${hit.device.orientation.landscape} (upside down? ${hit.device.orientation.upside_down})</td></tr>
+<tr><td>Internet speed</td><td>${hit.device.speed.time} (fast? ${hit.device.speed.fast})</td></tr>
+
+  </tbody></thead>
+  </table>
+  
+  
+  <h3>Other</h3>
+  <table>
+            <thead>
+  <tr>
+    <th>Query</th>
+    <th>Value</th>
+  </tr>
+</thead><tbody>
+<tr><td>Referrer</td><td>${hit.page.referrer || "false"}</td></tr>
+  </tbody></thead></table>
+      </div>
+    </div>`.replaceAll("true", `<span class="yes">Yes</span>`).replaceAll("false", "<span class='no'>No</span>")
+      document.body.appendChild(modal);
+    }
+    run();
+    setInterval(run, 5000)
+  </script>
+</html>
