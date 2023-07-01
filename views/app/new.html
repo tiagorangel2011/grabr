@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A simple yet powerful IP grabber" />
+
+    <title>New link | Grabr</title>
+
+    <link
+      id="favicon"
+      rel="icon"
+      href="/cdn/fav.svg"
+      type="image/x-icon"
+    />
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+
+    <!-- import the webpage's client-side javascript file -->
+    <script src="/client.js" defer></script>
+  </head>
+  <body>    <header>
+      <div class="header">
+        
+      <a href="/"><img src="/cdn/logo_white.svg" alt="grabr"></a>
+      <h1>Creating link...</h1>
+      <p>
+        Please wait while we create your Grabr tracking link.
+      </p>
+        <div class="form" style="flex-direction: column;display:none;">
+        <input class="link" type="url" readonly value="https://example.com/articles/long-link/1846" name="link">
+          <a style="width: 100%;" class="linker"><button class="link" style="color: white;background-color:#311e67;padding: 15px;font-size: 17px;width: 100%;border:none;cursor:pointer;">Open dashboard</button></a>
+        </div>
+      </div>
+    </header>
+  </body>
+  <script src="https://palettejs.glitch.me/p.js"></script>
+  <script>
+  async function run() {
+const link = new URL(window.location.href).searchParams.get('link');
+    
+    const res = await (await fetch("/api/new/?l=" + link)).json()
+      const linkID = res.id;
+      const key = res.key;
+      $("h1").innerText = "Link created";
+      $("p").innerText = "Your link has been created. Copy it below.";
+      $("input").value = `https://${location.hostname}/${linkID}`;
+      $(".linker").setAttribute("href", `/${linkID}/app?secret=${key}`);
+      $(".form").style.display = "block";
+  }
+    run()
+  </script>
+</html>

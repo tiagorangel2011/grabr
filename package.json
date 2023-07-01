@@ -1,0 +1,26 @@
+{
+  "name": "grabr",
+  "version": "0.0.1",
+  "description": "Grabify clone",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "node-fetch": "^2.6.11",
+    "qjson-db": "^1.0.2"
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/grabr"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
+}

