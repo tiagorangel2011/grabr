@@ -1,3 +1,7 @@
+# OUTDATED
+THIS IS OUTDATED, I'M WAITING FOR GLITCH TO UNSUSPEND MY PROJECT BEFORE CONTINUING, AS I NOW DON'T HAVE ACCESS TO THE CODE.
+SO IT'S NOW IN ARCHIVE MODE.
+
 ### ⚠️ EDUCATIONAL PURPOSES ONLY ⚠️
 Before Glitch bans this project under violation of "violates any person’s right to privacy or publicity or otherwise solicits, collects, or publishes data, including personal information and login information, about other Users without consent [...]", I would like to note that:
 * Data is easily deleted
